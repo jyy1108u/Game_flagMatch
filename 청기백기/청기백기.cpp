@@ -27,7 +27,7 @@ bool doOrder = false; //조작가능한 시간.
 //0번이 모두 내림, 1번은 백기만 올림, 2번은 청기만 올림, 3번은 둘다 올림이다.
 
 //청기, 백기, 점프, 앉아, 일어나
-bool KeyboradInput[5] = { false, false, false, false, false};
+bool KeyboradInput[5] = { false, false, false, false, false };
 
 struct Order
 {
@@ -37,12 +37,12 @@ struct Order
 
 struct Order orderList_Lv1[7] = {
     {"images/order/Lv1/청기올려.png", 0 },
-    {"images/order/Lv1/백기올려.png", 0 },
+    {"images/order/Lv1/백기올려.png", 1 },
     {"images/order/Lv1/청기내려.png", 0 },
-    {"images/order/Lv1/백기내려.png",1},
-    {"images/order/Lv1/점프.png",2},
-    {"images/order/Lv1/앉아.png",3},
-    {"images/order/Lv1/일어나.png",4}
+    {"images/order/Lv1/백기내려.png", 1 },
+    {"images/order/Lv1/점프.png", 2 },
+    {"images/order/Lv1/앉아.png", 3 },
+    {"images/order/Lv1/일어나.png", 4 }
 };
 
 
@@ -70,7 +70,6 @@ void ShowCorrectOrder() {
 
         srand((unsigned int)time(NULL));
         int num = rand() % 7; // 0~6 난수 생성
-        orderNum = num; //오더넘버에 숫자를 저장
 
         if (poseNum == 0) { //둘다 false인상태
             
@@ -160,8 +159,8 @@ void ShowCorrectOrder() {
 
             }
         }
+        orderNum = num; //오더넘버에 숫자를 저장
     }
-
     setTimer(WaitOrder, 3.0f);
     startTimer(WaitOrder);
 }
@@ -181,10 +180,6 @@ void CheckStatus() {
             }
         }
     }
-
-    for (int i = 0; i < 5; i++) {
-        KeyboradInput[i] = false; //키보드인풋 초기화
-    }
 }
 
 
@@ -193,7 +188,10 @@ void keyboardCallback(KeyCode code, KeyState state)
 {    
     if (doOrder) { //doOrder가 활성화될때만 입력 가능.
         if (code == KeyCode::KEY_A && state == KeyState::KEY_PRESSED) {	//청기
-            KeyboradInput[0] = true;
+            
+            if (KeyboradInput[0]) KeyboradInput[0] = false;
+            else KeyboradInput[0] = true;
+
             if (poseNum == 0) { //0번 상태라면
                 if (!sitdown) changeImagechar("images/char_2.png", 2);
                 else changeImagechar("images/Schar_2.png", 2);
@@ -212,7 +210,10 @@ void keyboardCallback(KeyCode code, KeyState state)
             }
         }
         else if (code == KeyCode::KEY_D && state == KeyState::KEY_PRESSED) { //백기
-            KeyboradInput[1] = true;
+            
+            if (KeyboradInput[1]) KeyboradInput[1] = false;
+            else KeyboradInput[1] = true;
+
             if (poseNum == 0) { //0번 상태라면
                 if (!sitdown) changeImagechar("images/char_1.png", 1);
                 else changeImagechar("images/Schar_1.png", 1);
@@ -231,36 +232,42 @@ void keyboardCallback(KeyCode code, KeyState state)
             }
         }
         else if (code == KeyCode::KEY_W && state == KeyState::KEY_PRESSED) { //일어나
-            KeyboradInput[4] = true;
-            if (poseNum == 0) { //0번 상태라면
-                changeImagechar("images/char_0.png", 0);
+            if (sitdown) {
+                KeyboradInput[4] = true;
+                if (poseNum == 0) { //0번 상태라면
+                    changeImagechar("images/char_0.png", 0);
+                }
+                else if (poseNum == 1) { //1번 상태라면
+                    changeImagechar("images/char_1.png", 1);
+                }
+                else if (poseNum == 2) {//2번 상태라면
+                    changeImagechar("images/char_2.png", 2);
+                }
+                else if (poseNum == 3) { //3번 상태라면
+                    changeImagechar("images/char_3.png", 3);
+                }
+                sitdown = false;
+                locateObject(emotion, gamemain, 585, 322);
             }
-            else if (poseNum == 1) { //1번 상태라면
-                changeImagechar("images/char_1.png", 1);
-            }
-            else if (poseNum == 2) {//2번 상태라면
-                changeImagechar("images/char_2.png", 2);
-            }
-            else if (poseNum == 3) { //3번 상태라면
-                changeImagechar("images/char_3.png", 3);
-            }
-            sitdown = false;
         }
         else if (code == KeyCode::KEY_S && state == KeyState::KEY_PRESSED) { //앉아
-            KeyboradInput[3] = true;
-            if (poseNum == 0) { //0번 상태라면
-                changeImagechar("images/Schar_0.png", 0);
+            if (!sitdown) {
+                KeyboradInput[3] = true;
+                if (poseNum == 0) { //0번 상태라면
+                    changeImagechar("images/Schar_0.png", 0);
+                }
+                else if (poseNum == 1) { //1번 상태라면
+                    changeImagechar("images/Schar_1.png", 1);
+                }
+                else if (poseNum == 2) {//2번 상태라면
+                    changeImagechar("images/Schar_2.png", 2);
+                }
+                else if (poseNum == 3) { //3번 상태라면
+                    changeImagechar("images/Schar_3.png", 3);
+                }
+                sitdown = true;
+                locateObject(emotion, gamemain, 583, 303);
             }
-            else if (poseNum == 1) { //1번 상태라면
-                changeImagechar("images/Schar_1.png", 1);
-            }
-            else if (poseNum == 2) {//2번 상태라면
-                changeImagechar("images/Schar_2.png", 2);
-            }
-            else if (poseNum == 3) { //3번 상태라면
-                changeImagechar("images/Schar_3.png", 3);
-            }
-            sitdown = true;
         }
         else if (code == KeyCode::KEY_SPACE && state == KeyState::KEY_PRESSED) { //점프
             KeyboradInput[2] = true;
@@ -280,8 +287,13 @@ void TimercallBack(TimerID timer) {
         
         doOrder = false; 
         CheckStatus(); //성공 or 실패 체킹
+
         emotionTimer = createTimer(1.0f);
         startTimer(emotionTimer);
+
+        for (int i = 0; i < 5; i++) {
+            KeyboradInput[i] = false; //키보드인풋 초기화
+        }
     }
 
     if (timer == emotionTimer) {
