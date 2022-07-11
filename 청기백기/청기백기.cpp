@@ -8,21 +8,23 @@
 //전역변수 선언
 SceneID gamemain; //메인 게임화면 세팅
 
-ObjectID mainchar, heart, order, emotion;
+ObjectID mainchar, heart[3], order, emotion;
 
 TimerID jumpUP, jumpDown, jumpMove; //점프 올라갈때/내려갈때 타이머
 
-TimerID WaitOrder; //이 타이머가 끝나면 오더를 표시
+TimerID WaitOrder, inTimer; //이 타이머가 끝나면 오더를 표시
 TimerID emotionTimer;
 
 int poseNum = 0; //초깃값 0
 int charY = 180; //캐릭터 x좌표 변수
 int Level = 1; //초기 단계 1
 int orderNum = 0;
+int orderClearCount = 0; //오더 점수 매기는 변수 (겉으로는 보이지 않는다)
 
 bool sitdown = false; //깃발, 앉은상태의 bool 변수
 bool jumpup = true; //초기에는 위로 올라감.
 bool doOrder = false; //조작가능한 시간.
+bool Heart_ex[3] = { true, true, true };
 
 //0번이 모두 내림, 1번은 백기만 올림, 2번은 청기만 올림, 3번은 둘다 올림이다.
 
@@ -172,6 +174,21 @@ void CheckStatus() {
     for (int i = 0; i < 5; i++) {
         if ((!KeyboradInput[i] && (i == orderList_Lv1[orderNum].key)) || (KeyboradInput[i] && (i != orderList_Lv1[orderNum].key))) {
             setObjectImage(emotion, "images/s_fail.png");
+
+            if (Heart_ex[0]) {
+                hideObject(heart[0]);
+                Heart_ex[0] = false;
+            }
+            else if (Heart_ex[1]) {
+                hideObject(heart[1]);
+                Heart_ex[1] = false;
+            }
+            else if (Heart_ex[2]) { //게임 종료!
+                hideObject(heart[2]);
+                Heart_ex[2] = false;
+                doOrder = false; 
+            }
+
             break;
         }
         else {
@@ -282,6 +299,12 @@ void keyboardCallback(KeyCode code, KeyState state)
 
 //타이머콜백
 void TimercallBack(TimerID timer) {
+
+    if (timer == inTimer) { //맨 초기 타이머
+        WaitOrder = createTimer(1.0f);
+        ShowCorrectOrder();
+        showTimer(WaitOrder); //시간 타이머는 표시해준다
+    }
     
     if (timer == WaitOrder) { //오더가 끝나면
         
@@ -297,9 +320,15 @@ void TimercallBack(TimerID timer) {
     }
 
     if (timer == emotionTimer) {
-        setObjectImage(emotion, "images/none.png");//감정 제거
-        ShowCorrectOrder();
-        doOrder = true;
+       
+        if (!Heart_ex[2]) { //게임이 오버되었다면
+            showMessage("게임종료!");
+        }
+        else {
+            setObjectImage(emotion, "images/none.png");//감정 제거
+            ShowCorrectOrder();
+            doOrder = true;
+        }
     }
     
     if (timer == jumpMove) { //그림 올렸다 내리는 함수
@@ -349,12 +378,17 @@ int main()
     order = CreateObject1("images/none.png", 132, 516); //명령창_초기에는 투명
     emotion = CreateObject1("images/none.png", 585, 322); //감정표현
 
+    heart[0] = CreateObject1("images/heart.png", 1050, 32);
+    heart[1] = CreateObject1("images/heart.png", 1115, 32);
+    heart[2] = CreateObject1("images/heart.png", 1180, 32);
+
     //오브젝트 보이기
     showObject(mainchar); showObject(order); showObject(emotion);
+    showObject(heart[0]); showObject(heart[1]); showObject(heart[2]);
 
-    WaitOrder = createTimer(1.0f); //기다리는 타이머_첫 오더는 1초 이후
-    showTimer(WaitOrder);
-    startTimer(WaitOrder);
+    //초기 타이머 설정
+    inTimer = createTimer(1.0f);
+    startTimer(inTimer);
 
     //기본 레이아웃 감추기
     setGameOption(GameOption::GAME_OPTION_INVENTORY_BUTTON, false);
