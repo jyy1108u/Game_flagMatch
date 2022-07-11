@@ -203,98 +203,74 @@ void ShowCorrectOrder() {
     if (Level == 2) { //2단계에서
 
         srand((unsigned int)time(NULL));
-        int num = rand() % 16; // 0~15 난수 생성
 
-        if (poseNum == 0) { //둘다 false인상태
+        if (poseNum == 0) { //둘다 false인상태 2,3,6,8,13 14 15
 
             if (sitdown) {
-                if (num == 2 || num == 3 || num == 5) {
-                    num = rand() % 2;
-                    setObjectImage(order, orderList_Lv1[num].orderfile);
-                } //2,3,5일때는 0,1중 하나의 오더로....
-                else {
-                    setObjectImage(order, orderList_Lv1[num].orderfile); //오더 이미지를 생성하기
-                }
+                int num[5] = { 3,6,8,13,15 };
+                int pickNum = rand() % 5;
+                orderNum = num[pickNum]; //오더넘버에 숫자를 저장
+                setObjectImage(order, orderList_Lv2[num[pickNum]].orderfile);
+                
             }
             else {
-                if (num == 2 || num == 3 || num == 6) {
-                    num = num - 2;
-                    setObjectImage(order, orderList_Lv1[num].orderfile);
-                }
-                else {
-                    setObjectImage(order, orderList_Lv1[num].orderfile); //오더 이미지를 생성하기
-                }
-
+                int num[5] = { 2,3,13,14,15 };
+                int pickNum = rand() % 5;
+                orderNum = num[pickNum]; //오더넘버에 숫자를 저장
+                setObjectImage(order, orderList_Lv2[num[pickNum]].orderfile);
             }
         }
         else if (poseNum == 1) {
 
             if (sitdown) {
-                if (num == 1 || num == 2 || num == 5) {
-                    num = (rand() % 2) + 3;
-                    setObjectImage(order, orderList_Lv1[num].orderfile);
-                }
-                else {
-                    setObjectImage(order, orderList_Lv1[num].orderfile); //오더 이미지를 생성하기
-                }
+                int num[5] = { 1,5,8,12,15 };
+                int pickNum = rand() % 5;
+                orderNum = num[pickNum]; //오더넘버에 숫자를 저장
+                setObjectImage(order, orderList_Lv2[num[pickNum]].orderfile);
+
             }
             else {
-                if (num == 1 || num == 2 || num == 6) {
-                    num = (rand() % 2) + 3;
-                    setObjectImage(order, orderList_Lv1[num].orderfile);
-                }
-                else {
-                    setObjectImage(order, orderList_Lv1[num].orderfile); //오더 이미지를 생성하기
-                }
-
+                int num[5] = { 0,1,12,14,15 };
+                int pickNum = rand() % 5;
+                orderNum = num[pickNum]; //오더넘버에 숫자를 저장
+                setObjectImage(order, orderList_Lv2[num[pickNum]].orderfile);
             }
         }
         else if (poseNum == 2) {
 
             if (sitdown) {
-                if (num == 0 || num == 3 || num == 5) {
-                    num = num + 1;
-                    setObjectImage(order, orderList_Lv1[num].orderfile);
-                }
-                else {
-                    setObjectImage(order, orderList_Lv1[num].orderfile); //오더 이미지를 생성하기
-                }
+                int num[5] = { 3,4,6,7,11 };
+                int pickNum = rand() % 5;
+                orderNum = num[pickNum]; //오더넘버에 숫자를 저장
+                setObjectImage(order, orderList_Lv2[num[pickNum]].orderfile);
+
             }
             else {
-                if (num == 0 || num == 3 || num == 6) {
-                    num = (rand() % 2) + 1;
-                    setObjectImage(order, orderList_Lv1[num].orderfile);
-                }
-                else {
-                    setObjectImage(order, orderList_Lv1[num].orderfile); //오더 이미지를 생성하기
-                }
-
+                int num[5] = { 2,3,4,10,11 };
+                int pickNum = rand() % 5;
+                orderNum = num[pickNum]; //오더넘버에 숫자를 저장
+                setObjectImage(order, orderList_Lv2[num[pickNum]].orderfile);
             }
         }
         else if (poseNum == 3) {
 
             if (sitdown) {
-                if (num == 0 || num == 1 || num == 5) {
-                    num = (rand() % 3) + 2;
-                    setObjectImage(order, orderList_Lv1[num].orderfile);
-                }
-                else {
-                    setObjectImage(order, orderList_Lv1[num].orderfile); //오더 이미지를 생성하기
-                }
-            }
-            else {
-                if (num == 0 || num == 1 || num == 6) {
-                    num = (rand() % 4) + 2;
-                    setObjectImage(order, orderList_Lv1[num].orderfile);
-                }
-                else {
-                    setObjectImage(order, orderList_Lv1[num].orderfile); //오더 이미지를 생성하기
-                }
+                int num[5] = { 1,5,7,9,11 };
+                int pickNum = rand() % 5;
+                orderNum = num[pickNum]; //오더넘버에 숫자를 저장
+                setObjectImage(order, orderList_Lv2[num[pickNum]].orderfile);
 
             }
+            else {
+                int num[5] = { 0,1,9,10,11 };
+                int pickNum = rand() % 5;
+                orderNum = num[pickNum]; //오더넘버에 숫자를 저장
+                setObjectImage(order, orderList_Lv2[num[pickNum]].orderfile);
+            }
         }
-        orderNum = num; //오더넘버에 숫자를 저장
     }
+
+
     setTimer(WaitOrder, 3.0f);
     startTimer(WaitOrder);
 }
