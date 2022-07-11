@@ -31,13 +31,27 @@ bool Heart_ex[3] = { true, true, true };
 //청기, 백기, 점프, 앉아, 일어나
 bool KeyboradInput[5] = { false, false, false, false, false };
 
-struct Order
+struct Order_Lv1
 {
     const char* orderfile; //오더 파일명
     int key;
 };
 
-struct Order orderList_Lv1[7] = {
+struct Order_Lv2
+{
+    const char* orderfile; //오더 파일명
+    int key1;
+    int Key2;
+};
+
+struct Order_Lv3
+{
+    const char* orderfile; //오더 파일명
+    int key1;
+    int Key2;
+};
+
+struct Order_Lv1 orderList_Lv1[7] = {
     {"images/order/Lv1/청기올려.png", 0 },
     {"images/order/Lv1/백기올려.png", 1 },
     {"images/order/Lv1/청기내려.png", 0 },
@@ -45,6 +59,28 @@ struct Order orderList_Lv1[7] = {
     {"images/order/Lv1/점프.png", 2 },
     {"images/order/Lv1/앉아.png", 3 },
     {"images/order/Lv1/일어나.png", 4 }
+};
+
+struct Order_Lv2 orderList_Lv2[16] = {
+    {"images/order/Lv2/백기내리고앉아.png", 1, 3 },
+    {"images/order/Lv2/백기내리고점프.png", 1, 2 },
+    {"images/order/Lv2/백기올리고앉아.png", 1, 3 },
+    {"images/order/Lv2/백기올리고점프.png", 1, 2 },
+    {"images/order/Lv2/백기올리고청기내려.png", 0, 1 },
+    {"images/order/Lv2/일어나고백기내려.png", 4, 1 },
+    {"images/order/Lv2/일어나고백기올려.png", 4, 1 },
+    {"images/order/Lv2/일어나고청기내려.png", 4, 0 },
+    {"images/order/Lv2/일어나고청기올려.png", 0, 4 },
+    {"images/order/Lv2/청기내리고백기내려.png", 1, 0 },
+    {"images/order/Lv2/청기내리고앉아.png", 0, 3 },
+    {"images/order/Lv2/청기내리고점프.png", 0, 2 },
+    {"images/order/Lv2/청기올리고백기내려.png", 0, 1 },
+    {"images/order/Lv2/청기올리고백기올려.png", 0, 1 },
+    {"images/order/Lv2/청기올리고앉아.png", 0, 3 },
+    {"images/order/Lv2/청기올리고점프.png", 0, 2 }
+};
+
+struct Order_Lv3 orderList_Lv3[7] = {
 };
 
 
@@ -141,6 +177,102 @@ void ShowCorrectOrder() {
         }
         else if (poseNum == 3) {
             
+            if (sitdown) {
+                if (num == 0 || num == 1 || num == 5) {
+                    num = (rand() % 3) + 2;
+                    setObjectImage(order, orderList_Lv1[num].orderfile);
+                }
+                else {
+                    setObjectImage(order, orderList_Lv1[num].orderfile); //오더 이미지를 생성하기
+                }
+            }
+            else {
+                if (num == 0 || num == 1 || num == 6) {
+                    num = (rand() % 4) + 2;
+                    setObjectImage(order, orderList_Lv1[num].orderfile);
+                }
+                else {
+                    setObjectImage(order, orderList_Lv1[num].orderfile); //오더 이미지를 생성하기
+                }
+
+            }
+        }
+        orderNum = num; //오더넘버에 숫자를 저장
+    }
+
+    if (Level == 2) { //2단계에서
+
+        srand((unsigned int)time(NULL));
+        int num = rand() % 16; // 0~15 난수 생성
+
+        if (poseNum == 0) { //둘다 false인상태
+
+            if (sitdown) {
+                if (num == 2 || num == 3 || num == 5) {
+                    num = rand() % 2;
+                    setObjectImage(order, orderList_Lv1[num].orderfile);
+                } //2,3,5일때는 0,1중 하나의 오더로....
+                else {
+                    setObjectImage(order, orderList_Lv1[num].orderfile); //오더 이미지를 생성하기
+                }
+            }
+            else {
+                if (num == 2 || num == 3 || num == 6) {
+                    num = num - 2;
+                    setObjectImage(order, orderList_Lv1[num].orderfile);
+                }
+                else {
+                    setObjectImage(order, orderList_Lv1[num].orderfile); //오더 이미지를 생성하기
+                }
+
+            }
+        }
+        else if (poseNum == 1) {
+
+            if (sitdown) {
+                if (num == 1 || num == 2 || num == 5) {
+                    num = (rand() % 2) + 3;
+                    setObjectImage(order, orderList_Lv1[num].orderfile);
+                }
+                else {
+                    setObjectImage(order, orderList_Lv1[num].orderfile); //오더 이미지를 생성하기
+                }
+            }
+            else {
+                if (num == 1 || num == 2 || num == 6) {
+                    num = (rand() % 2) + 3;
+                    setObjectImage(order, orderList_Lv1[num].orderfile);
+                }
+                else {
+                    setObjectImage(order, orderList_Lv1[num].orderfile); //오더 이미지를 생성하기
+                }
+
+            }
+        }
+        else if (poseNum == 2) {
+
+            if (sitdown) {
+                if (num == 0 || num == 3 || num == 5) {
+                    num = num + 1;
+                    setObjectImage(order, orderList_Lv1[num].orderfile);
+                }
+                else {
+                    setObjectImage(order, orderList_Lv1[num].orderfile); //오더 이미지를 생성하기
+                }
+            }
+            else {
+                if (num == 0 || num == 3 || num == 6) {
+                    num = (rand() % 2) + 1;
+                    setObjectImage(order, orderList_Lv1[num].orderfile);
+                }
+                else {
+                    setObjectImage(order, orderList_Lv1[num].orderfile); //오더 이미지를 생성하기
+                }
+
+            }
+        }
+        else if (poseNum == 3) {
+
             if (sitdown) {
                 if (num == 0 || num == 1 || num == 5) {
                     num = (rand() % 3) + 2;
