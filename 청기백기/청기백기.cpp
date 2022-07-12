@@ -17,7 +17,7 @@ TimerID emotionTimer;
 
 int poseNum = 0; //초깃값 0
 int charY = 180; //캐릭터 x좌표 변수
-int Level = 1; //초기 단계 1
+int Level = 2; //초기 단계 1
 int orderNum = 0;
 int orderClearCount = 0; //오더 점수 매기는 변수 (겉으로는 보이지 않는다)
 
@@ -198,6 +198,9 @@ void ShowCorrectOrder() {
             }
         }
         orderNum = num; //오더넘버에 숫자를 저장
+
+        setTimer(WaitOrder, 3.0f); //1단계는 3초
+        startTimer(WaitOrder);
     }
 
     if (Level == 2) { //2단계에서
@@ -268,11 +271,10 @@ void ShowCorrectOrder() {
                 setObjectImage(order, orderList_Lv2[num[pickNum]].orderfile);
             }
         }
+
+        setTimer(WaitOrder, 2.0f);
+        startTimer(WaitOrder);
     }
-
-
-    setTimer(WaitOrder, 3.0f);
-    startTimer(WaitOrder);
 }
 
 
@@ -280,30 +282,60 @@ void ShowCorrectOrder() {
 void CheckStatus() {
 
     for (int i = 0; i < 5; i++) {
-        if ((!KeyboradInput[i] && (i == orderList_Lv1[orderNum].key)) || (KeyboradInput[i] && (i != orderList_Lv1[orderNum].key))) {
-            setObjectImage(emotion, "images/s_fail.png");
+        if (Level == 1) {
+            if ((!KeyboradInput[i] && (i == orderList_Lv1[orderNum].key)) || (KeyboradInput[i] && (i != orderList_Lv1[orderNum].key))) {
+                setObjectImage(emotion, "images/s_fail.png");
 
-            if (Heart_ex[0]) {
-                hideObject(heart[0]);
-                Heart_ex[0] = false;
-            }
-            else if (Heart_ex[1]) {
-                hideObject(heart[1]);
-                Heart_ex[1] = false;
-            }
-            else if (Heart_ex[2]) { //게임 종료!
-                hideObject(heart[2]);
-                Heart_ex[2] = false;
-                doOrder = false; 
-            }
+                if (Heart_ex[0]) {
+                    hideObject(heart[0]);
+                    Heart_ex[0] = false;
+                }
+                else if (Heart_ex[1]) {
+                    hideObject(heart[1]);
+                    Heart_ex[1] = false;
+                }
+                else if (Heart_ex[2]) { //게임 종료!
+                    hideObject(heart[2]);
+                    Heart_ex[2] = false;
+                    doOrder = false;
+                }
 
-            break;
-        }
-        else {
-            if (i == 4) {
-                setObjectImage(emotion, "images/success.png");
+                break;
+            }
+            else {
+                if (i == 4) {
+                    setObjectImage(emotion, "images/success.png");
+                }
             }
         }
+        else if (Level == 2) {
+            if ((KeyboradInput[i] && ((i == orderList_Lv2[orderNum].key1) || (i == orderList_Lv2[orderNum].Key2))) || 
+                (!KeyboradInput[i] && ((i != orderList_Lv2[orderNum].key1) && (i != orderList_Lv2[orderNum].Key2)))) {
+                if (i == 4) {
+                    setObjectImage(emotion, "images/success.png");
+                }
+            }
+            else {
+                setObjectImage(emotion, "images/s_fail.png");
+
+                if (Heart_ex[0]) {
+                    hideObject(heart[0]);
+                    Heart_ex[0] = false;
+                }
+                else if (Heart_ex[1]) {
+                    hideObject(heart[1]);
+                    Heart_ex[1] = false;
+                }
+                else if (Heart_ex[2]) { //게임 종료!
+                    hideObject(heart[2]);
+                    Heart_ex[2] = false;
+                    doOrder = false;
+                }
+
+                break;
+            }
+        }
+        
     }
 }
 
