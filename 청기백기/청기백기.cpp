@@ -27,6 +27,8 @@ bool jumpup = true; //초기에는 위로 올라감.
 bool doOrder = false; //조작가능한 시간.
 bool Heart_ex[3] = { true, true, true };
 
+SoundID bgm, win, lose, sit, flag, jump, orderS, right, wrong, pop; //사운드
+
 //0번이 모두 내림, 1번은 백기만 올림, 2번은 청기만 올림, 3번은 둘다 올림이다.
 
 //청기, 백기, 점프, 앉아, 일어나
@@ -143,6 +145,7 @@ void changeImagechar(const char *filename, int num) {
 void ShowCorrectOrder() {
 
     doOrder = true;
+    playSound(orderS);
 
     if (Level == 1) { //1단계에서
 
@@ -356,7 +359,7 @@ void ShowCorrectOrder() {
 
             if (sitdown) {
                 int num[8] = { 3,4,6,7,11,28,30 };
-                int pickNum = rand() % 7;
+                int pickNum = rand() % 8;
                 orderNum = num[pickNum]; //오더넘버에 숫자를 저장
                 setObjectImage(order, orderList_Lv3[num[pickNum]].orderfile);
 
@@ -372,7 +375,7 @@ void ShowCorrectOrder() {
 
             if (sitdown) {
                 int num[7] = { 1,5,7,9,11,27,30 };
-                int pickNum = rand() % 5;
+                int pickNum = rand() % 7;
                 orderNum = num[pickNum]; //오더넘버에 숫자를 저장
                 setObjectImage(order, orderList_Lv3[num[pickNum]].orderfile);
 
@@ -398,6 +401,7 @@ void CheckStatus() {
         if (Level == 1) {
             if ((!KeyboradInput[i] && (i == orderList_Lv1[orderNum].key)) || (KeyboradInput[i] && (i != orderList_Lv1[orderNum].key))) {
                 setObjectImage(emotion, "images/s_fail.png");
+                playSound(wrong);
 
                 if (Heart_ex[0]) {
                     setObjectImage(heart[0], "images/none.png");
@@ -418,6 +422,7 @@ void CheckStatus() {
             else {
                 if (i == 4) {
                     setObjectImage(emotion, "images/success.png");
+                    playSound(right);
                     orderClearCount++; //점수 추가
                 }
             }
@@ -427,11 +432,13 @@ void CheckStatus() {
                 (!KeyboradInput[i] && ((i != orderList_Lv2[orderNum].key1) && (i != orderList_Lv2[orderNum].Key2)))) {
                 if (i == 4) {
                     setObjectImage(emotion, "images/success.png");
+                    playSound(right);
                     orderClearCount++; //점수 추가
                 }
             }
             else {
                 setObjectImage(emotion, "images/s_fail.png");
+                playSound(wrong);
 
                 if (Heart_ex[0]) {
                     setObjectImage(heart[0], "images/none.png");
@@ -455,11 +462,13 @@ void CheckStatus() {
                 (!KeyboradInput[i] && ((i != orderList_Lv3[orderNum].key1) && (i != orderList_Lv3[orderNum].Key2) && (i != orderList_Lv3[orderNum].Key3)))) {
                 if (i == 4) {
                     setObjectImage(emotion, "images/success.png");
+                    playSound(right);
                     orderClearCount++; //점수 추가
                 }
             }
             else {
                 setObjectImage(emotion, "images/s_fail.png");
+                playSound(wrong);
 
                 if (Heart_ex[0]) {
                     setObjectImage(heart[0], "images/none.png");
@@ -492,12 +501,16 @@ void CheckNextLevel() {
             setObjectImage(LevelClear, "images/stageClear.png"); 
             showObject(LevelClear);
             showObject(nextbutton); //버튼 보이기
+            stopSound(bgm);
+            playSound(win);
         }
         else {
             if (!Heart_ex[2]) { //게임이 오버되었다면
                 doOrder = false;
                 setObjectImage(LevelClear, "images/stagefail.png"); //실패로 이미지 바꿈
                 showObject(LevelClear); showObject(exitbutton); showObject(restartbutton);
+                stopSound(bgm);
+                playSound(lose);
 
             }
             else {
@@ -513,12 +526,16 @@ void CheckNextLevel() {
             setObjectImage(LevelClear, "images/stageClear.png");
             showObject(LevelClear);
             showObject(nextbutton); //버튼 보이기
+            stopSound(bgm);
+            playSound(win);
         }
         else {
             if (!Heart_ex[2]) { //게임이 오버되었다면
                 doOrder = false;
                 setObjectImage(LevelClear, "images/stagefail.png"); //실패로 이미지 바꿈
                 showObject(LevelClear); showObject(exitbutton); showObject(restartbutton);
+                stopSound(bgm);
+                playSound(lose);
             }
             else {
                 setObjectImage(emotion, "images/none.png");//감정 제거
@@ -533,12 +550,16 @@ void CheckNextLevel() {
             setObjectImage(LevelClear, "images/stageClear.png");
             showObject(LevelClear);
             showObject(exitbutton);
+            stopSound(bgm);
+            playSound(win);
         }
         else {
             if (!Heart_ex[2]) { //게임이 오버되었다면
                 doOrder = false;
                 setObjectImage(LevelClear, "images/stagefail.png"); //실패로 이미지 바꿈
                 showObject(LevelClear); showObject(exitbutton); showObject(restartbutton);
+                stopSound(bgm);
+                playSound(lose);
             }
             else {
                 setObjectImage(emotion, "images/none.png");//감정 제거
@@ -558,6 +579,7 @@ void keyboardCallback(KeyCode code, KeyState state)
             
             if (KeyboradInput[0]) KeyboradInput[0] = false;
             else KeyboradInput[0] = true;
+            playSound(flag);
 
             if (poseNum == 0) { //0번 상태라면
                 if (!sitdown) changeImagechar("images/char_2.png", 2);
@@ -580,6 +602,7 @@ void keyboardCallback(KeyCode code, KeyState state)
             
             if (KeyboradInput[1]) KeyboradInput[1] = false;
             else KeyboradInput[1] = true;
+            playSound(flag);
 
             if (poseNum == 0) { //0번 상태라면
                 if (!sitdown) changeImagechar("images/char_1.png", 1);
@@ -601,6 +624,8 @@ void keyboardCallback(KeyCode code, KeyState state)
         else if (code == KeyCode::KEY_W && state == KeyState::KEY_PRESSED) { //일어나
             if (sitdown) {
                 KeyboradInput[4] = true;
+                playSound(sit);
+
                 if (poseNum == 0) { //0번 상태라면
                     changeImagechar("images/char_0.png", 0);
                 }
@@ -620,6 +645,8 @@ void keyboardCallback(KeyCode code, KeyState state)
         else if (code == KeyCode::KEY_S && state == KeyState::KEY_PRESSED) { //앉아
             if (!sitdown) {
                 KeyboradInput[3] = true;
+                playSound(sit);
+
                 if (poseNum == 0) { //0번 상태라면
                     changeImagechar("images/Schar_0.png", 0);
                 }
@@ -642,6 +669,7 @@ void keyboardCallback(KeyCode code, KeyState state)
             jumpUP = createTimer(0.12f);
             startTimer(jumpMove); //타이머 시작
             startTimer(jumpUP); //타이머 
+            playSound(jump);
         }
     }
 }
@@ -709,6 +737,8 @@ void TimercallBack(TimerID timer) {
 }
 
 void mouseCallack1(ObjectID obj, int x, int y, MouseAction act) {
+
+    playSound(pop); //클릭 소리
     
     if (obj == nextbutton) { //다음 레벨 버튼을 눌렀을 때
         
@@ -735,6 +765,8 @@ void mouseCallack1(ObjectID obj, int x, int y, MouseAction act) {
         poseNum = 0; //포즈넘버 초기화
         sitdown = false; //앉은변수
         locateObject(emotion, gamemain, 585, 322);
+
+        stopSound(win); stopSound(lose); playSound(bgm);
 
         inTimer = createTimer(1.0f);
         startTimer(inTimer); //타이머 재시작
@@ -763,6 +795,8 @@ void mouseCallack1(ObjectID obj, int x, int y, MouseAction act) {
         poseNum = 0; //포즈넘버 초기화
         sitdown = false; //앉은변수
         locateObject(emotion, gamemain, 585, 322);
+
+        stopSound(win); stopSound(lose); playSound(bgm);
 
         inTimer = createTimer(1.0f);
         startTimer(inTimer); //타이머 재시작
@@ -810,6 +844,21 @@ int main()
     showObject(mainchar); showObject(order); showObject(emotion);
     showObject(heart[0]); showObject(heart[1]); showObject(heart[2]);
     showObject(LevelShow);
+
+    //사운드
+    bgm = createSound("audios/Dizzy.mp3"); //0
+    win = createSound("audios/win.mp3");
+    lose = createSound("audios/lose.mp3");
+    right = createSound("audios/right.mp3"); //0
+    wrong = createSound("audios/wrong.mp3"); //0
+    sit = createSound("audios/sit.mp3");
+    jump = createSound("audios/jump.mp3");
+    flag = createSound("audios/flag.mp3");
+    orderS = createSound("audios/order.mp3");
+    pop = createSound("audios/pop.mp3"); //0
+
+    //브금 재생 시작
+    playSound(bgm);
 
     //기본 레이아웃 감추기
     setGameOption(GameOption::GAME_OPTION_INVENTORY_BUTTON, false);
