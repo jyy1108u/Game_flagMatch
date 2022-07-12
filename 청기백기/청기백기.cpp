@@ -6,9 +6,10 @@
 #include <time.h>
 
 //전역변수 선언
-SceneID gamemain; //메인 게임화면 세팅
+SceneID gamemain, mainmenu; //메인 게임화면 세팅
 
-ObjectID mainchar, heart[3], order, emotion;
+ObjectID startbutton; 
+ObjectID mainchar, heart[3], order, emotion, LevelShow, LevelClear, nextbutton, restartbutton, exitbutton;
 
 TimerID jumpUP, jumpDown, jumpMove; //점프 올라갈때/내려갈때 타이머
 
@@ -17,7 +18,7 @@ TimerID emotionTimer;
 
 int poseNum = 0; //초깃값 0
 int charY = 180; //캐릭터 x좌표 변수
-int Level = 2; //초기 단계 1
+int Level = 1; //초기 단계 1
 int orderNum = 0;
 int orderClearCount = 0; //오더 점수 매기는 변수 (겉으로는 보이지 않는다)
 
@@ -49,6 +50,7 @@ struct Order_Lv3
     const char* orderfile; //오더 파일명
     int key1;
     int Key2;
+    int Key3; 
 };
 
 struct Order_Lv1 orderList_Lv1[7] = {
@@ -80,7 +82,45 @@ struct Order_Lv2 orderList_Lv2[16] = {
     {"images/order/Lv2/청기올리고점프.png", 0, 2 }
 };
 
-struct Order_Lv3 orderList_Lv3[7] = {
+struct Order_Lv3 orderList_Lv3[34] = {
+
+    //LV2와 같은 항목
+    {"images/order/Lv2/백기내리고앉아.png", 1, 1, 3 },
+    {"images/order/Lv2/백기내리고점프.png", 1, 1, 2 },
+    {"images/order/Lv2/백기올리고앉아.png", 1, 1, 3 },
+    {"images/order/Lv2/백기올리고점프.png", 1, 1, 2 },
+    {"images/order/Lv2/백기올리고청기내려.png", 0, 0, 1 },
+    {"images/order/Lv2/일어나고백기내려.png", 4, 4, 1 },
+    {"images/order/Lv2/일어나고백기올려.png", 4, 4, 1 },
+    {"images/order/Lv2/일어나고청기내려.png", 4, 4, 0 },
+    {"images/order/Lv2/일어나고청기올려.png", 0, 0, 4 },
+    {"images/order/Lv2/청기내리고백기내려.png", 1, 1, 0 },
+    {"images/order/Lv2/청기내리고앉아.png", 0, 0, 3 },
+    {"images/order/Lv2/청기내리고점프.png", 0, 0, 2 },
+    {"images/order/Lv2/청기올리고백기내려.png", 0, 0, 1 },
+    {"images/order/Lv2/청기올리고백기올려.png", 0, 0, 1 },
+    {"images/order/Lv2/청기올리고앉아.png", 0, 0, 3 },
+    {"images/order/Lv2/청기올리고점프.png", 0, 0, 2 },
+
+    //LV3에서 추가된 항목
+    {"images/order/Lv3/백기올리지말고앉아.png", 3, 3, 3 },
+    {"images/order/Lv3/백기올리지말고청기올려.png", 0, 0, 0 },
+    {"images/order/Lv3/앉고점프하고백기내려.png", 3, 2, 1 },
+    {"images/order/Lv3/앉고점프하고백기올려.png", 3, 2, 1 },
+    {"images/order/Lv3/앉고점프하고청기내려.png", 3, 2, 0 },
+    {"images/order/Lv3/앉고점프하고청기올려.png", 3, 2, 0 },
+    {"images/order/Lv3/앉지말고백기내려.png", 1, 1, 1 },
+    {"images/order/Lv3/앉지말고백기올려.png", 1, 1, 1 },
+    {"images/order/Lv3/앉지말고점프.png", 2, 2, 2 },
+    {"images/order/Lv3/앉지말고청기내려.png", 0, 0, 0 },
+    {"images/order/Lv3/앉지말고청기올려.png", 0, 0, 0 },
+    {"images/order/Lv3/점프하지말고백기내려.png", 1, 1, 1 },
+    {"images/order/Lv3/점프하지말고백기올려.png", 1, 1, 1 },
+    {"images/order/Lv3/점프하지말고앉아.png", 3, 3, 3 },
+    {"images/order/Lv3/점프하지말고청기내려.png", 0, 0, 0 },
+    {"images/order/Lv3/점프하지말고청기올려.png", 0, 0, 0 },
+    {"images/order/Lv3/청기올리지말고백기올려.png", 1, 1, 1 },
+    {"images/order/Lv3/청기올리지말고앉아.png", 3, 3, 3 }
 };
 
 
@@ -275,6 +315,79 @@ void ShowCorrectOrder() {
         setTimer(WaitOrder, 2.0f);
         startTimer(WaitOrder);
     }
+
+    if (Level == 3) { //3단계에서
+
+        srand((unsigned int)time(NULL));
+
+        if (poseNum == 0) { //둘다 false인상태
+
+            if (sitdown) {
+                int num[9] = { 3,6,8,13,15,17,28,31,32 };
+                int pickNum = rand() % 9;
+                orderNum = num[pickNum]; //오더넘버에 숫자를 저장
+                setObjectImage(order, orderList_Lv3[num[pickNum]].orderfile);
+
+            }
+            else {
+                int num[13] = { 2,3,13,14,15,16,19,21,23,24,26,29,33 };
+                int pickNum = rand() % 13;
+                orderNum = num[pickNum]; //오더넘버에 숫자를 저장
+                setObjectImage(order, orderList_Lv3[num[pickNum]].orderfile);
+            }
+        }
+        else if (poseNum == 1) {
+
+            if (sitdown) {
+                int num[7] = { 1,5,8,12,15,27,31 };
+                int pickNum = rand() % 7;
+                orderNum = num[pickNum]; //오더넘버에 숫자를 저장
+                setObjectImage(order, orderList_Lv3[num[pickNum]].orderfile);
+
+            }
+            else {
+                int num[13] = { 0,1,12,14,15,18,21,22,24,26,27,29,33 };
+                int pickNum = rand() % 13;
+                orderNum = num[pickNum]; //오더넘버에 숫자를 저장
+                setObjectImage(order, orderList_Lv3[num[pickNum]].orderfile);
+            }
+        }
+        else if (poseNum == 2) {
+
+            if (sitdown) {
+                int num[8] = { 3,4,6,7,11,28,30 };
+                int pickNum = rand() % 7;
+                orderNum = num[pickNum]; //오더넘버에 숫자를 저장
+                setObjectImage(order, orderList_Lv3[num[pickNum]].orderfile);
+
+            }
+            else {
+                int num[12] = { 2,3,4,10,11,16,19,20,23,24,25,29 };
+                int pickNum = rand() % 12;
+                orderNum = num[pickNum]; //오더넘버에 숫자를 저장
+                setObjectImage(order, orderList_Lv3[num[pickNum]].orderfile);
+            }
+        }
+        else if (poseNum == 3) {
+
+            if (sitdown) {
+                int num[7] = { 1,5,7,9,11,27,30 };
+                int pickNum = rand() % 5;
+                orderNum = num[pickNum]; //오더넘버에 숫자를 저장
+                setObjectImage(order, orderList_Lv3[num[pickNum]].orderfile);
+
+            }
+            else {
+                int num[11] = { 0,1,9,10,11,18,20,22,24,25,29 };
+                int pickNum = rand() % 11;
+                orderNum = num[pickNum]; //오더넘버에 숫자를 저장
+                setObjectImage(order, orderList_Lv3[num[pickNum]].orderfile);
+            }
+        }
+
+        setTimer(WaitOrder, 2.0f);
+        startTimer(WaitOrder);
+    }
 }
 
 
@@ -287,15 +400,15 @@ void CheckStatus() {
                 setObjectImage(emotion, "images/s_fail.png");
 
                 if (Heart_ex[0]) {
-                    hideObject(heart[0]);
+                    setObjectImage(heart[0], "images/none.png");
                     Heart_ex[0] = false;
                 }
                 else if (Heart_ex[1]) {
-                    hideObject(heart[1]);
+                    setObjectImage(heart[1], "images/none.png");
                     Heart_ex[1] = false;
                 }
                 else if (Heart_ex[2]) { //게임 종료!
-                    hideObject(heart[2]);
+                    setObjectImage(heart[2], "images/none.png");
                     Heart_ex[2] = false;
                     doOrder = false;
                 }
@@ -305,6 +418,7 @@ void CheckStatus() {
             else {
                 if (i == 4) {
                     setObjectImage(emotion, "images/success.png");
+                    orderClearCount++; //점수 추가
                 }
             }
         }
@@ -313,21 +427,50 @@ void CheckStatus() {
                 (!KeyboradInput[i] && ((i != orderList_Lv2[orderNum].key1) && (i != orderList_Lv2[orderNum].Key2)))) {
                 if (i == 4) {
                     setObjectImage(emotion, "images/success.png");
+                    orderClearCount++; //점수 추가
                 }
             }
             else {
                 setObjectImage(emotion, "images/s_fail.png");
 
                 if (Heart_ex[0]) {
-                    hideObject(heart[0]);
+                    setObjectImage(heart[0], "images/none.png");
                     Heart_ex[0] = false;
                 }
                 else if (Heart_ex[1]) {
-                    hideObject(heart[1]);
+                    setObjectImage(heart[1], "images/none.png");
                     Heart_ex[1] = false;
                 }
                 else if (Heart_ex[2]) { //게임 종료!
-                    hideObject(heart[2]);
+                    setObjectImage(heart[2], "images/none.png");
+                    Heart_ex[2] = false;
+                    doOrder = false;
+                }
+
+                break;
+            }
+        }
+        else if (Level == 3) {
+            if ((KeyboradInput[i] && ((i == orderList_Lv3[orderNum].key1) || (i == orderList_Lv3[orderNum].Key2) || (i == orderList_Lv3[orderNum].Key3))) ||
+                (!KeyboradInput[i] && ((i != orderList_Lv3[orderNum].key1) && (i != orderList_Lv3[orderNum].Key2) && (i != orderList_Lv3[orderNum].Key3)))) {
+                if (i == 4) {
+                    setObjectImage(emotion, "images/success.png");
+                    orderClearCount++; //점수 추가
+                }
+            }
+            else {
+                setObjectImage(emotion, "images/s_fail.png");
+
+                if (Heart_ex[0]) {
+                    setObjectImage(heart[0], "images/none.png");
+                    Heart_ex[0] = false;
+                }
+                else if (Heart_ex[1]) {
+                    setObjectImage(heart[1], "images/none.png");
+                    Heart_ex[1] = false;
+                }
+                else if (Heart_ex[2]) { //게임 종료!
+                    setObjectImage(heart[2], "images/none.png");
                     Heart_ex[2] = false;
                     doOrder = false;
                 }
@@ -336,6 +479,73 @@ void CheckStatus() {
             }
         }
         
+    }
+}
+
+
+//스테이지 레벨 올리기 체크하는 함수
+void CheckNextLevel() {
+
+    if (Level == 1) { //1레벨이면
+        if (orderClearCount > 10) {
+            doOrder = false;
+            setObjectImage(LevelClear, "images/stageClear.png"); 
+            showObject(LevelClear);
+            showObject(nextbutton); //버튼 보이기
+        }
+        else {
+            if (!Heart_ex[2]) { //게임이 오버되었다면
+                doOrder = false;
+                setObjectImage(LevelClear, "images/stagefail.png"); //실패로 이미지 바꿈
+                showObject(LevelClear); showObject(exitbutton); showObject(restartbutton);
+
+            }
+            else {
+                setObjectImage(emotion, "images/none.png");//감정 제거
+                ShowCorrectOrder();
+                doOrder = true;
+            }
+        }
+    }
+    else if (Level == 2) { //1레벨이면
+        if (orderClearCount > 15) {
+            doOrder = false;
+            setObjectImage(LevelClear, "images/stageClear.png");
+            showObject(LevelClear);
+            showObject(nextbutton); //버튼 보이기
+        }
+        else {
+            if (!Heart_ex[2]) { //게임이 오버되었다면
+                doOrder = false;
+                setObjectImage(LevelClear, "images/stagefail.png"); //실패로 이미지 바꿈
+                showObject(LevelClear); showObject(exitbutton); showObject(restartbutton);
+            }
+            else {
+                setObjectImage(emotion, "images/none.png");//감정 제거
+                ShowCorrectOrder();
+                doOrder = true;
+            }
+        }
+    }
+    else if (Level == 3) { //마지막 스테이지
+        if (orderClearCount > 25) {
+            doOrder = false;
+            setObjectImage(LevelClear, "images/stageClear.png");
+            showObject(LevelClear);
+            showObject(exitbutton);
+        }
+        else {
+            if (!Heart_ex[2]) { //게임이 오버되었다면
+                doOrder = false;
+                setObjectImage(LevelClear, "images/stagefail.png"); //실패로 이미지 바꿈
+                showObject(LevelClear); showObject(exitbutton); showObject(restartbutton);
+            }
+            else {
+                setObjectImage(emotion, "images/none.png");//감정 제거
+                ShowCorrectOrder();
+                doOrder = true;
+            }
+        }
     }
 }
 
@@ -460,15 +670,7 @@ void TimercallBack(TimerID timer) {
     }
 
     if (timer == emotionTimer) {
-       
-        if (!Heart_ex[2]) { //게임이 오버되었다면
-            showMessage("게임종료!");
-        }
-        else {
-            setObjectImage(emotion, "images/none.png");//감정 제거
-            ShowCorrectOrder();
-            doOrder = true;
-        }
+        CheckNextLevel(); //다음레벨로 가는지 체크
     }
     
     if (timer == jumpMove) { //그림 올렸다 내리는 함수
@@ -506,17 +708,99 @@ void TimercallBack(TimerID timer) {
     }
 }
 
+void mouseCallack1(ObjectID obj, int x, int y, MouseAction act) {
+    
+    if (obj == nextbutton) { //다음 레벨 버튼을 눌렀을 때
+        
+        //하트 갯수 초기화, 하트 bool변수 초기화, 레벨 숫자 올리기, 레벨 표시 올리기, 점수 카운트 초기화, 오더넘버 초기화, 캐릭터 셋팅 초기화, 재시작
+        hideObject(LevelClear); hideObject(nextbutton); //오브젝트 숨기기
+
+        //하트 초기화
+        for (int i = 0; i < 3; i++) {
+            setObjectImage(heart[i], "images/heart.png");
+            Heart_ex[i] = true;
+        }
+
+        //레벨
+        if (Level == 1) setObjectImage(LevelShow, "images/L2.png"); //레벨이미지 변경
+        else if (Level == 2) setObjectImage(LevelShow, "images/L3.png");
+        Level = Level + 1; //레벨 업
+
+        orderClearCount = 0; //점수 초기화
+        orderNum = 0; //오더번호 초기화
+
+        setObjectImage(order, "images/none.png"); //이전 오더 숨기기
+        setObjectImage(emotion, "images/none.png"); //감정 숨기기
+        setObjectImage(mainchar, "images/char_0.png"); //캐릭터 포즈 초기화
+        poseNum = 0; //포즈넘버 초기화
+        sitdown = false; //앉은변수
+        locateObject(emotion, gamemain, 585, 322);
+
+        inTimer = createTimer(1.0f);
+        startTimer(inTimer); //타이머 재시작
+    }
+
+    if (obj == restartbutton) {
+        //하트 갯수 초기화, 하트 bool변수 초기화, 레벨 숫자 올리기, 레벨 표시 올리기, 점수 카운트 초기화, 오더넘버 초기화, 캐릭터 셋팅 초기화, 재시작
+        hideObject(restartbutton); hideObject(exitbutton); hideObject(LevelClear); //오브젝트 숨기기
+
+        //하트 초기화
+        for (int i = 0; i < 3; i++) {
+            setObjectImage(heart[i], "images/heart.png");
+            Heart_ex[i] = true;
+        }
+
+        //레벨
+        Level = 1; //1단계부터 재시작.
+        setObjectImage(LevelShow, "images/L1.png"); //레벨이미지 변경
+
+        orderClearCount = 0; //점수 초기화
+        orderNum = 0; //오더번호 초기화
+
+        setObjectImage(order, "images/none.png"); //이전 오더 숨기기
+        setObjectImage(emotion, "images/none.png"); //감정 숨기기
+        setObjectImage(mainchar, "images/char_0.png"); //캐릭터 포즈 초기화
+        poseNum = 0; //포즈넘버 초기화
+        sitdown = false; //앉은변수
+        locateObject(emotion, gamemain, 585, 322);
+
+        inTimer = createTimer(1.0f);
+        startTimer(inTimer); //타이머 재시작
+    }
+
+    if (obj == exitbutton) endGame(); //게임 종료하기.
+
+    if (obj == startbutton) {
+
+        enterScene(gamemain);
+
+        //초기 타이머 설정
+        inTimer = createTimer(1.0f);
+        startTimer(inTimer);
+    }
+}
+
 
 //메인함수
 int main()
 {
     //메인 씬 생성
     gamemain = createScene("청기백기", "images/background.png");
+    mainmenu = createScene("메인메뉴", "images/mainmenu.png");
 
     //오브젝트 생성
+    startbutton = createObject("images/startbutton.png");
+    locateObject(startbutton, mainmenu, 529, 50);
+    showObject(startbutton);
+
     mainchar = CreateObject1("images/char_0.png", 230, charY); //캐릭터
     order = CreateObject1("images/none.png", 132, 516); //명령창_초기에는 투명
     emotion = CreateObject1("images/none.png", 585, 322); //감정표현
+    LevelShow = CreateObject1("images/L1.png", 72, 35); //레벨
+    LevelClear = CreateObject1("images/stageClear.png", 0, 0); //스테이지 클리어 시 표시화면
+    nextbutton = CreateObject1("images/nextbutton.png", 537, 295); //다음스테이지 버튼
+    restartbutton = CreateObject1("images/restartbutton.png", 474, 290); //재시작 버튼
+    exitbutton = CreateObject1("images/exitbutton.png", 700, 290); //나가기 버튼
 
     heart[0] = CreateObject1("images/heart.png", 1050, 32);
     heart[1] = CreateObject1("images/heart.png", 1115, 32);
@@ -525,10 +809,7 @@ int main()
     //오브젝트 보이기
     showObject(mainchar); showObject(order); showObject(emotion);
     showObject(heart[0]); showObject(heart[1]); showObject(heart[2]);
-
-    //초기 타이머 설정
-    inTimer = createTimer(1.0f);
-    startTimer(inTimer);
+    showObject(LevelShow);
 
     //기본 레이아웃 감추기
     setGameOption(GameOption::GAME_OPTION_INVENTORY_BUTTON, false);
@@ -538,6 +819,7 @@ int main()
     //콜백함수 등록
     setKeyboardCallback(keyboardCallback);
     setTimerCallback(TimercallBack);
+    setMouseCallback(mouseCallack1); 
 
-    startGame(gamemain);
+    startGame(mainmenu);
 }
